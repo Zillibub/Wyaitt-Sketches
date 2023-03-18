@@ -11,6 +11,10 @@ class TheGuardianSource:
         self.api_url = 'https://content.guardianapis.com/search'
 
     def fetch(self) -> List[str]:
+        """
+        Features today article titles
+        :return: list of today articles
+        """
         current_date = datetime.datetime.now().strftime('%Y-%m-%d')
         params = {
             'api-key': settings.the_guardian_api_key,
@@ -28,4 +32,3 @@ class TheGuardianSource:
         for article in data['response']['results']:
             titles.append(article["webTitle"])
         return titles
-
