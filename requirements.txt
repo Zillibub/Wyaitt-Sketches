@@ -1,3 +1,5 @@
 pydantic~=1.8.1
+pydantic[dotenv]
 requests~=2.21.0
 openai~=0.27.2
+discord~=2.2.2
