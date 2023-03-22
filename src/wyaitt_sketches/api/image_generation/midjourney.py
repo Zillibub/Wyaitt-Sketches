@@ -1,9 +1,8 @@
 import discord
 from wyaitt_sketches.core.settings import settings
-import time
 
 # Create a new client from the discord.py library
-client = discord.Client()
+client = discord.Client(intents=discord.Intents.default())
 
 
 # Define a coroutine to be called when the bot receives a message
@@ -22,8 +21,7 @@ async def on_message(message):
 
 def send_prompt():
     # Send a message to the specified Discord group
-    group_id = 1234567890  # Replace with your group ID
-    group = client.get_guild(group_id)
+    group = client.get_guild(settings.discord_guild_id)
     channels = group.channels
     for channel in channels:
         if isinstance(channel, discord.TextChannel):
