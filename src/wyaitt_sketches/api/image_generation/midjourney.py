@@ -16,17 +16,17 @@ async def on_message(message):
     if isinstance(message.channel, discord.DMChannel):
         # Check if the message contained the word "start"
         if "start" in message.content.lower():
-            send_prompt()
+            await send_prompt()
 
 
-def send_prompt():
+async def send_prompt():
     # Send a message to the specified Discord group
     group = client.get_guild(settings.discord_guild_id)
     channels = group.channels
     for channel in channels:
-        if isinstance(channel, discord.TextChannel):
+        if channel.name == "general":
             await channel.send(f"/imagine prompt")
-            break  # Only send the message to the first text channel
+            break  # Only send the message to the first general channel
 
 
 # Start the bot with your token (replace YOUR_TOKEN_HERE with your actual bot token)
