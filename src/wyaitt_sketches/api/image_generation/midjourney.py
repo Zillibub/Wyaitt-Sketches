@@ -30,4 +30,4 @@ def send_prompt():
 
 
 # Start the bot with your token (replace YOUR_TOKEN_HERE with your actual bot token)
-client.run("YOUR_TOKEN_HERE")
+client.run(settings.discord_bot_token)
