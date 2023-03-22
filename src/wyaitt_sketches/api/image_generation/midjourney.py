@@ -1,26 +1,35 @@
 import discord
 from wyaitt_sketches.core.settings import settings
+import time
+
+# Create a new client from the discord.py library
+client = discord.Client()
 
 
-class MidJourneyAPI:
-    def __init__(self):
-        self.client = discord.Client(intents=discord.Intents.default())
+# Define a coroutine to be called when the bot receives a message
+@client.event
+async def on_message(message):
+    # Check if the message was sent by the bot itself
+    if message.author == client.user:
+        return
 
-    async def print_guilds(self):
-        """
-        Printing all servers this bot has access to
-        :return:
-        """
-        await self.client.login(settings.discord_bot_token)
-        for guild in self.client.guilds:
-            print(f"- {guild.id} (name: {guild.name})")
+    # Check if the message was a direct message to the bot
+    if isinstance(message.channel, discord.DMChannel):
+        # Check if the message contained the word "start"
+        if "start" in message.content.lower():
+            send_prompt()
 
-    async def send_message(self, bot_id, message):
-        # log in to Discord with the bot token
-        await self.client.login(settings.discord_bot_token)
 
-        # get the user object of the bot
-        bot_user = await self.client.fetch_user(bot_id)
+def send_prompt():
+    # Send a message to the specified Discord group
+    group_id = 1234567890  # Replace with your group ID
+    group = client.get_guild(group_id)
+    channels = group.channels
+    for channel in channels:
+        if isinstance(channel, discord.TextChannel):
+            await channel.send(f"/imagine prompt")
+            break  # Only send the message to the first text channel
 
-        # send a direct message to the bot
-        await bot_user.send(message)
+
+# Start the bot with your token (replace YOUR_TOKEN_HERE with your actual bot token)
+client.run("YOUR_TOKEN_HERE")
