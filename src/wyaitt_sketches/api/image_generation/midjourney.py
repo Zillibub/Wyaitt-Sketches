@@ -25,7 +25,7 @@ async def send_prompt():
     channels = group.channels
     for channel in channels:
         if channel.name == "general":
-            await channel.send(f"/imagine prompt")
+            await channel.send(f"{936929561302675456} /imagine prompt abc")
             break  # Only send the message to the first general channel
 
 
