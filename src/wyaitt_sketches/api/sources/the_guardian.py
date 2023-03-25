@@ -1,7 +1,7 @@
 import json
 import datetime
 import requests
-from typing import List
+from typing import List, Dict
 from wyaitt_sketches.core.settings import settings
 
 
@@ -10,7 +10,7 @@ class TheGuardianSource:
     def __init__(self):
         self.api_url = 'https://content.guardianapis.com/search'
 
-    def fetch(self) -> List[str]:
+    def fetch_today_articles(self) -> List[Dict]:
         """
         Features today article titles
         :return: list of today articles
@@ -26,9 +26,13 @@ class TheGuardianSource:
         if response.status_code != 200:
             raise ValueError("Cannot retrieve data")
 
-        data = json.loads(response.text)
+        return json.loads(response.text)['response']['results']
 
-        titles = []
-        for article in data['response']['results']:
-            titles.append(article["webTitle"])
-        return titles
+    def fetch_content(self, api_url: str, amount_of_paragraphs: int) -> List[str]:
+        """
+
+        :param api_url:
+        :param amount_of_paragraphs:
+        :return:
+        """
+
