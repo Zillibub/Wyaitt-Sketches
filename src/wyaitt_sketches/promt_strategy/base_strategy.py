@@ -6,7 +6,7 @@ openai.api_key = settings.openai_token
 
 class BaseStrategy:
     @staticmethod
-    def _get_completion(prompt):
+    def _get_completion(prompt, actor="a chatbot"):
         """
         Generate text completion for a given prompt using the OpenAI GPT-3 language model.
 
@@ -17,7 +17,7 @@ class BaseStrategy:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a chatbot"},
+                {"role": "system", "content": f"You are {actor}"},
                 {"role": "user", "content": prompt},
             ]
         )

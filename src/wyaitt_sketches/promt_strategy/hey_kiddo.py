@@ -25,11 +25,11 @@ class HeyKiddoStrategy(BaseStrategy):
         articles = self.source.fetch_today_articles()
 
         titles = [article["webTitle"] for article in articles]
-        titles_promt = " ".join([f"{i}. {x}" for i, x in enumerate(titles)])
+        titles_prompt = " ".join([f"{i}. {x}" for i, x in enumerate(titles)])
 
         selected_title = self._get_completion(
             f"Which one of this titles is most suitable for a funny picture? "
-            f"Reply only with one number.  {titles_promt}"
+            f"Reply only with one number.  {titles_prompt}"
         )
         match = re.search(r'\d+', selected_title)
         if match:
@@ -39,7 +39,26 @@ class HeyKiddoStrategy(BaseStrategy):
 
         return articles[title_number]
 
-    def evaluate(self):
+    def evaluate(self) -> str:
 
         article = self._select_article()
+
+        paragraphs = self.source.fetch_content(article["apiUrl"], 2)
+
+        content_description = self._get_completion(
+            f"Explain this for a 5 year old {article['webTitle'] + ' '.join(paragraphs)} in a funny way",
+            "an artist"
+        )
+
+        illustration_prompt = self._get_completion(
+            f"describe this ironic illustration {content_description} in 30 words sentence",
+            "an artist"
+        )
+
+        illustration_style = self._get_completion(
+            f"what is the best style for this picture? Answer in 3 words {illustration_prompt}",
+            "an artist"
+        )
+
+        return illustration_prompt + illustration_style
 
