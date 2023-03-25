@@ -1,6 +1,7 @@
 import json
 import datetime
 import requests
+from bs4 import BeautifulSoup
 from typing import List, Dict
 from wyaitt_sketches.core.settings import settings
 
@@ -35,4 +36,14 @@ class TheGuardianSource:
         :param amount_of_paragraphs:
         :return:
         """
+        response = requests.get(api_url, params={'api-key': self.api_url, "show-fields": "body"})
+
+        if response.status_code != 200:
+            raise ValueError("Cannot retrieve data")
+
+        text_body = json.loads(response.text)['response']['content']['fields']['body']
+
+        soup = BeautifulSoup(text_body, 'html.parser')
+        paragraphs = soup.find_all('p')[:amount_of_paragraphs]
+        return [p.get_text() for p in paragraphs]
 
