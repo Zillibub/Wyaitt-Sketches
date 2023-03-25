@@ -1,4 +1,5 @@
-import openai
+from typing import Dict
+import re
 from wyaitt_sketches.promt_strategy.base_strategy import BaseStrategy
 from wyaitt_sketches.api.sources.the_guardian import TheGuardianSource
 
@@ -20,11 +21,25 @@ class HeyKiddoStrategy(BaseStrategy):
     def __init__(self):
         self.source = TheGuardianSource()
 
-    def evaluate(self):
+    def _select_article(self) -> Dict:
         articles = self.source.fetch_today_articles()
 
-        titles = []
-        for article in articles:
-            titles.append(article["webTitle"])
-            print(article['webTitle'])
-            print()
+        titles = [article["webTitle"] for article in articles]
+        titles_promt = " ".join([f"{i}. {x}" for i, x in enumerate(titles)])
+
+        selected_title = self._get_completion(
+            f"Which one of this titles is most suitable for a funny picture? "
+            f"Reply only with one number.  {titles_promt}"
+        )
+        match = re.search(r'\d+', selected_title)
+        if match:
+            title_number = int(match.group())
+        else:
+            raise ValueError("Cannot parse title number")
+
+        return articles[title_number]
+
+    def evaluate(self):
+
+        article = self._select_article()
+
