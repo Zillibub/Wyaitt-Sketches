@@ -1,7 +1,19 @@
-from typing import Dict
 import re
+from enum import Enum
+from typing import Dict
+from dataclasses import dataclass
 from wyaitt_sketches.promt_strategy.base_strategy import BaseStrategy
 from wyaitt_sketches.api.sources.the_guardian import TheGuardianSource
+
+
+@dataclass
+class PromptOutput:
+    """
+    Result of hey kiddo strategy evaluation
+    """
+    original_title: str
+    original_url: str
+    illustration_prompt: str
 
 
 class HeyKiddoStrategy(BaseStrategy):
@@ -39,7 +51,7 @@ class HeyKiddoStrategy(BaseStrategy):
 
         return articles[title_number]
 
-    def evaluate(self) -> str:
+    def evaluate(self) -> PromptOutput:
 
         article = self._select_article()
 
@@ -51,8 +63,8 @@ class HeyKiddoStrategy(BaseStrategy):
         )
 
         illustration_prompt = self._get_completion(
-            f"describe this ironic illustration {content_description} in 30 words sentence",
-            "an artist"
+            f"describe this illustration {content_description} in 30 words sentence",
+            "a graphic designer generating creative images. You provide ironic descriptive prompts"
         )
 
         illustration_style = self._get_completion(
@@ -60,5 +72,10 @@ class HeyKiddoStrategy(BaseStrategy):
             "an artist"
         )
 
-        return illustration_prompt + illustration_style
+        prompt_output = PromptOutput(
+            original_title=article['webTitle'],
+            original_url=article["webUrl"],
+            illustration_prompt=illustration_prompt + illustration_style
+        )
 
+        return prompt_output
