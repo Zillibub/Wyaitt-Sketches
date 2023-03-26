@@ -1,10 +1,10 @@
 import openai
 from wyaitt_sketches.core.settings import settings
-
 openai.api_key = settings.openai_token
 
 
 class BaseStrategy:
+
     @staticmethod
     def _get_completion(prompt, actor="a chatbot"):
         """
@@ -21,5 +21,5 @@ class BaseStrategy:
                 {"role": "user", "content": prompt},
             ]
         )
-        selected_title = response.choices[0].text.strip()
-        return selected_title
+        completion = response.choices[0].message.content
+        return completion

@@ -36,7 +36,12 @@ class TheGuardianSource:
         :param amount_of_paragraphs:
         :return:
         """
-        response = requests.get(api_url, params={'api-key': self.api_url, "show-fields": "body"})
+        response = requests.get(
+            api_url, params={
+                'api-key': settings.the_guardian_api_key,
+                "show-fields": "body"
+            }
+        )
 
         if response.status_code != 200:
             raise ValueError("Cannot retrieve data")
