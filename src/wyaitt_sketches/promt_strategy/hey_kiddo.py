@@ -1,5 +1,6 @@
 import re
 import datetime
+import logging
 from typing import Dict
 from dataclasses import dataclass
 from wyaitt_sketches.promt_strategy.base_strategy import BaseStrategy
@@ -60,6 +61,8 @@ class HeyKiddoStrategy(BaseStrategy):
 
         article = self._select_article(date)
 
+        logging.debug(f"article: {article['webTitle']}")
+
         paragraphs = self.source.fetch_content(article["apiUrl"], 2)
 
         content_description = self._get_completion(
@@ -67,15 +70,21 @@ class HeyKiddoStrategy(BaseStrategy):
             "an artist"
         )
 
+        logging.debug(f"content_description: {content_description}")
+
         illustration_prompt = self._get_completion(
             f"describe this illustration {content_description} in 30 words sentence",
             "a graphic designer generating creative images. You provide ironic descriptive prompts"
         )
 
+        logging.debug(f"illustration_prompt: {illustration_prompt}")
+
         illustration_style = self._get_completion(
             f"what is the best style for this picture? Answer in 3 words {illustration_prompt}",
             "an artist"
         )
+
+        logging.debug(f"illustration_style: {illustration_style}")
 
         prompt_output = PromptOutput(
             original_title=article['webTitle'],
