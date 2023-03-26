@@ -11,16 +11,19 @@ class TheGuardianSource:
     def __init__(self):
         self.api_url = 'https://content.guardianapis.com/search'
 
-    def fetch_today_articles(self) -> List[Dict]:
+    def fetch_articles(self, date: datetime.date) -> List[Dict]:
         """
-        Features today article titles
+        Features article titles
         :return: list of today articles
         """
-        current_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        if date is None:
+            date = datetime.datetime.now().strftime('%Y-%m-%d')
+        else:
+            date = date.strftime('%Y-%m-%d')
         params = {
             'api-key': settings.the_guardian_api_key,
-            'from-date': current_date,
-            'to-date': current_date
+            'from-date': date,
+            'to-date': date
         }
 
         response = requests.get(self.api_url, params=params)

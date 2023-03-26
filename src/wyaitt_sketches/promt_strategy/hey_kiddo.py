@@ -1,5 +1,5 @@
 import re
-from enum import Enum
+import datetime
 from typing import Dict
 from dataclasses import dataclass
 from wyaitt_sketches.promt_strategy.base_strategy import BaseStrategy
@@ -33,8 +33,8 @@ class HeyKiddoStrategy(BaseStrategy):
     def __init__(self):
         self.source = TheGuardianSource()
 
-    def _select_article(self) -> Dict:
-        articles = self.source.fetch_today_articles()
+    def _select_article(self, date: datetime.date = None) -> Dict:
+        articles = self.source.fetch_articles(date)
 
         titles = [article["webTitle"] for article in articles]
         titles_prompt = " ".join([f"{i}. {x}" for i, x in enumerate(titles)])
@@ -51,9 +51,14 @@ class HeyKiddoStrategy(BaseStrategy):
 
         return articles[title_number]
 
-    def evaluate(self) -> PromptOutput:
+    def evaluate(self, date: datetime.date = None) -> PromptOutput:
+        """
 
-        article = self._select_article()
+        :param date: if None, d
+        :return:
+        """
+
+        article = self._select_article(date)
 
         paragraphs = self.source.fetch_content(article["apiUrl"], 2)
 
