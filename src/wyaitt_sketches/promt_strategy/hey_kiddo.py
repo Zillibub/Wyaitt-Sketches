@@ -88,18 +88,10 @@ class HeyKiddoStrategy(BaseStrategy):
 
         logging.debug(f"illustration_prompt: {illustration_prompt}")
 
-        # illustration_style = self._get_completion(
-        #     f"what is the best style for this picture? Answer in 3 words {illustration_prompt}",
-        #     "an artist"
-        # )
-        #
-        # logging.debug(f"illustration_style: {illustration_style}")
-
         prompt_output = PromptOutput(
             original_title=article['webTitle'],
             original_url=article["webUrl"],
             content_description=content_description,
-            # illustration_prompt=illustration_prompt + illustration_style
             illustration_prompt=illustration_prompt
         )
 
