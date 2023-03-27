@@ -43,21 +43,25 @@ class HeyKiddoStrategy(BaseStrategy):
             lines = file.readlines()
             self.content_descriptor = ' '.join(lines)
 
-    def _select_article(self, date: datetime.date = None) -> Dict:
-        articles = self.source.fetch_articles(date)
+    def _select_article(self, date: datetime.date = None, num_retries: int = 0) -> Dict:
 
+        title_number = None
+        articles = self.source.fetch_articles(date)
         titles = [article["webTitle"] for article in articles]
         titles_prompt = " ".join([f"{i}. {x}" for i, x in enumerate(titles)])
 
-        selected_title = self._get_completion(
-            f"Which one of this titles is most suitable for a ironic picture? "
-            f"Reply only with one number.  {titles_prompt}"
-        )
-        match = re.search(r'\d+', selected_title)
-        if match:
-            title_number = int(match.group())
-        else:
-            raise ValueError(f"Cannot parse title number {selected_title}")
+        for i in range(num_retries + 1):
+            selected_title = self._get_completion(
+                f"Which one of this titles is most suitable for a ironic picture? "
+                f"Reply only with one number.  {titles_prompt}"
+            )
+            match = re.search(r'\d+', selected_title)
+            if match:
+                title_number = int(match.group())
+                break
+
+        if title_number is None:
+            raise ValueError(f"Cannot select an article")
 
         return articles[title_number]
 
@@ -68,7 +72,7 @@ class HeyKiddoStrategy(BaseStrategy):
         :return:
         """
 
-        article = self._select_article(date)
+        article = self._select_article(date, num_retries=3)
 
         logging.debug(f"article: {article['webTitle']}")
 
