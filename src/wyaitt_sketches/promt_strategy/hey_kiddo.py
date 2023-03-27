@@ -14,6 +14,7 @@ class PromptOutput:
     """
     original_title: str
     original_url: str
+    content_description: str
     illustration_prompt: str
 
 
@@ -34,6 +35,14 @@ class HeyKiddoStrategy(BaseStrategy):
     def __init__(self):
         self.source = TheGuardianSource()
 
+        with open('actors/prompt_generator', 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+            self.prompt_generation_strategy = ' '.join(lines)
+
+        with open('actors/content_descriptor', 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+            self.content_descriptor = ' '.join(lines)
+
     def _select_article(self, date: datetime.date = None) -> Dict:
         articles = self.source.fetch_articles(date)
 
@@ -41,14 +50,14 @@ class HeyKiddoStrategy(BaseStrategy):
         titles_prompt = " ".join([f"{i}. {x}" for i, x in enumerate(titles)])
 
         selected_title = self._get_completion(
-            f"Which one of this titles is most suitable for a funny picture? "
+            f"Which one of this titles is most suitable for a ironic picture? "
             f"Reply only with one number.  {titles_prompt}"
         )
         match = re.search(r'\d+', selected_title)
         if match:
             title_number = int(match.group())
         else:
-            raise ValueError("Cannot parse title number")
+            raise ValueError(f"Cannot parse title number {selected_title}")
 
         return articles[title_number]
 
@@ -66,30 +75,32 @@ class HeyKiddoStrategy(BaseStrategy):
         paragraphs = self.source.fetch_content(article["apiUrl"], 2)
 
         content_description = self._get_completion(
-            f"Explain this for a 5 year old {article['webTitle'] + ' '.join(paragraphs)} in a funny way",
-            "an artist"
+            f"Describe this {article['webTitle'] + ' '.join(paragraphs)}",
+            self.content_descriptor
         )
 
         logging.debug(f"content_description: {content_description}")
 
         illustration_prompt = self._get_completion(
-            f"describe this illustration {content_description} in 30 words sentence",
-            "a graphic designer generating creative images. You provide ironic descriptive prompts"
+            f"Concept: {content_description}",
+            self.prompt_generation_strategy
         )
 
         logging.debug(f"illustration_prompt: {illustration_prompt}")
 
-        illustration_style = self._get_completion(
-            f"what is the best style for this picture? Answer in 3 words {illustration_prompt}",
-            "an artist"
-        )
-
-        logging.debug(f"illustration_style: {illustration_style}")
+        # illustration_style = self._get_completion(
+        #     f"what is the best style for this picture? Answer in 3 words {illustration_prompt}",
+        #     "an artist"
+        # )
+        #
+        # logging.debug(f"illustration_style: {illustration_style}")
 
         prompt_output = PromptOutput(
             original_title=article['webTitle'],
             original_url=article["webUrl"],
-            illustration_prompt=illustration_prompt + illustration_style
+            content_description=content_description,
+            # illustration_prompt=illustration_prompt + illustration_style
+            illustration_prompt=illustration_prompt
         )
 
         return prompt_output
