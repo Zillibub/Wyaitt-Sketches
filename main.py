@@ -12,7 +12,7 @@ def evaluate_one():
 def evaluate_history(depth):
     strategy = HeyKiddoStrategy()
     d = datetime.date.today() - datetime.timedelta(days=depth)
-    for i in range(depth):
+    for i in range(depth + 1):
         try:
             out = strategy.evaluate(d)
             print(f"Evaluation for {d}")
@@ -28,7 +28,7 @@ def evaluate_history(depth):
 
 
 def main():
-    evaluate_history(20)
+    evaluate_history(0)
 
 
 if __name__ == "__main__":
