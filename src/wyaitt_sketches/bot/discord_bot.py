@@ -1,4 +1,7 @@
 import discord
+import datetime
+from discord.ext import commands, tasks
+from wyaitt_sketches.promt_strategy.hey_kiddo import HeyKiddoStrategy
 from wyaitt_sketches.core.settings import settings
 
 # Create a new client from the discord.py library
@@ -17,6 +20,28 @@ async def on_message(message):
         # Check if the message contained the word "start"
         if "start" in message.content.lower():
             await send_prompt()
+
+
+@tasks.loop(hours=1)
+async def scheduled_message():
+    # Send a message to the specified Discord group
+    now = datetime.datetime.now()
+    if now.hour != 16:
+        return
+
+    group = client.get_guild(settings.discord_guild_id)
+    channels = group.channels
+    for channel in channels:
+        if channel.name == "general":
+
+            for i in range(5):
+                strategy = HeyKiddoStrategy()
+                out = strategy.evaluate(datetime.date.today())
+                await channel.send("\n".join([
+                    out.original_title,
+                    out.content_description,
+                    out.illustration_prompt
+                ]))
 
 
 async def send_prompt():
