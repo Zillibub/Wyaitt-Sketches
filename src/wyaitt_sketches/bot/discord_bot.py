@@ -26,7 +26,7 @@ async def on_message(message):
 async def scheduled_message():
     # Send a message to the specified Discord group
     now = datetime.datetime.now()
-    if now.hour != 16:
+    if now.hour != 22:
         return
 
     group = client.get_guild(settings.discord_guild_id)
@@ -39,9 +39,18 @@ async def scheduled_message():
                 out = strategy.evaluate(datetime.date.today())
                 await channel.send("\n".join([
                     out.original_title,
+                    out.original_url,
+                    "",
                     out.content_description,
+                    "",
                     out.illustration_prompt
                 ]))
+
+
+@client.event
+async def on_ready():
+    print(f"Logged in as {client.user}")
+    scheduled_message.start()
 
 
 async def send_prompt():
