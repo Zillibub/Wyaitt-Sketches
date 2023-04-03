@@ -26,7 +26,7 @@ async def on_message(message):
 async def scheduled_message():
     # Send a message to the specified Discord group
     now = datetime.datetime.now()
-    if now.hour != 22:
+    if now.hour != 19:
         return
 
     group = client.get_guild(settings.discord_guild_id)
