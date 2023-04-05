@@ -1,6 +1,6 @@
 import logging
 import datetime
-from wyaitt_sketches.promt_strategy.hey_kiddo import HeyKiddoStrategy
+from wyaitt_sketches.prompt_strategy.hey_kiddo import HeyKiddoStrategy
 
 
 def evaluate_one():

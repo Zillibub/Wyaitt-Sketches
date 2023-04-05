@@ -1,7 +1,7 @@
 import discord
 import datetime
 from discord.ext import commands, tasks
-from wyaitt_sketches.promt_strategy.hey_kiddo import HeyKiddoStrategy
+from wyaitt_sketches.prompt_strategy.hey_kiddo import HeyKiddoStrategy
 from wyaitt_sketches.core.settings import settings
 
 # Create a new client from the discord.py library

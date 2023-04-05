@@ -3,7 +3,7 @@ import datetime
 import logging
 from typing import Dict
 from dataclasses import dataclass
-from wyaitt_sketches.promt_strategy.base_strategy import BaseStrategy
+from wyaitt_sketches.prompt_strategy.base_strategy import BaseStrategy
 from wyaitt_sketches.api.sources.the_guardian import TheGuardianSource
 
 
@@ -68,7 +68,7 @@ class HeyKiddoStrategy(BaseStrategy):
     def evaluate(self, date: datetime.date = None) -> PromptOutput:
         """
 
-        :param date: if None, d
+        :param date: if None, today date will be used
         :return:
         """
 
