@@ -18,8 +18,8 @@ async def on_message(message):
     # Check if the message was a direct message to the bot
     if isinstance(message.channel, discord.DMChannel):
         # Check if the message contained the word "start"
-        if "start" in message.content.lower():
-            await send_prompt()
+        if "create" in message.content.lower():
+            await create_prompt()
 
 
 @tasks.loop(hours=1)
@@ -28,7 +28,21 @@ async def scheduled_message():
     now = datetime.datetime.now()
     if now.hour != 19:
         return
+    await create_prompt()
 
+
+@client.event
+async def on_ready():
+    print(f"Logged in as {client.user}")
+    scheduled_message.start()
+
+
+async def create_prompt():
+    """
+    Evaluates prompt strategy and writes result to the output
+    :return:
+    """
+    # Send a message to the specified Discord group
     group = client.get_guild(settings.discord_guild_id)
     channels = group.channels
     for channel in channels:
@@ -46,21 +60,6 @@ async def scheduled_message():
                     out.illustration_prompt
                 ]))
 
-
-@client.event
-async def on_ready():
-    print(f"Logged in as {client.user}")
-    scheduled_message.start()
-
-
-async def send_prompt():
-    # Send a message to the specified Discord group
-    group = client.get_guild(settings.discord_guild_id)
-    channels = group.channels
-    for channel in channels:
-        if channel.name == "general":
-            await channel.send(f"{936929561302675456} /imagine prompt abc")
-            break  # Only send the message to the first general channel
 
 
 # Start the bot with your token (replace YOUR_TOKEN_HERE with your actual bot token)
